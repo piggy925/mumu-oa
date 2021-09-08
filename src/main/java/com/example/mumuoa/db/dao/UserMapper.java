@@ -1,19 +1,14 @@
 package com.example.mumuoa.db.dao;
 
-import com.example.mumuoa.db.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.HashMap;
 
 @Mapper
 public interface UserMapper {
-    int deleteByPrimaryKey(Integer id);
+    boolean haveRootUser();
 
-    int insert(User record);
+    int insert(HashMap param);
 
-    int insertSelective(User record);
-
-    User selectByPrimaryKey(Integer id);
-
-    int updateByPrimaryKeySelective(User record);
-
-    int updateByPrimaryKey(User record);
+    Integer searchIdByOpenId(String openId);
 }
