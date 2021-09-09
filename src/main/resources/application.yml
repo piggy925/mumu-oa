@@ -69,5 +69,5 @@ mumuoa:
     cache-expire: 10
 
 wx:
-  app-id: wxf22d6fbdd8863bd6
-  app-secret: eae9b4c1a0845e5ddeab0606ad936bd8
+  app-id:
+  app-secret:
