@@ -67,3 +67,7 @@ mumuoa:
     expire: 5
     #redis缓存过期时间，单位为天
     cache-expire: 10
+
+wx:
+  app-id: wxf22d6fbdd8863bd6
+  app-secret: eae9b4c1a0845e5ddeab0606ad936bd8
