@@ -10,45 +10,52 @@
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="hashmap" useGeneratedKeys="true">
         insert into tb_user
         set
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="openId != null">
-                open_id = #{openId},
-            </if>
-            <if test="nickname != null">
-                nickname = #{nickName},
-            </if>
-            <if test="photo != null">
-                photo = #{photo},
-            </if>
-            <if test="name != null">
-                `name` = #{name},
-            </if>
-            <if test="sex != null">
-                sex = #{sex},
-            </if>
-            <if test="tel != null">
-                tel = #{tel},
-            </if>
-            <if test="email != null">
-                email = #{email},
-            </if>
-            <if test="hiredate != null">
-                hiredate = #{hiredate},
-            </if>
-            `role` = #{role},
-            root = #{root},
-            <if test="deptName != null">
-                dept_id = (select tb_dept.id from tb_dept where dept_name = #{deptName}),
-            </if>
-            `status` = #{status},
-            create_time = #{createTime}
-        </trim>
+        <if test="openId != null">
+            open_id = #{openId},
+        </if>
+        <if test="nickname != null">
+            nickname = #{nickname},
+        </if>
+        <if test="photo != null">
+            photo = #{photo},
+        </if>
+        <if test="name != null">
+            `name` = #{name},
+        </if>
+        <if test="sex != null">
+            sex = #{sex},
+        </if>
+        <if test="tel != null">
+            tel = #{tel},
+        </if>
+        <if test="email != null">
+            email = #{email},
+        </if>
+        <if test="hiredate != null">
+            hiredate = #{hiredate},
+        </if>
+        `role` = #{role},
+        root = #{root},
+        <if test="deptName != null">
+            dept_id = (select tb_dept.id from tb_dept where dept_name = #{deptName}),
+        </if>
+        `status` = #{status},
+        create_time = #{createTime}
     </insert>
 
     <select id="searchIdByOpenId" parameterType="string" resultType="integer">
         select id
         from tb_user
         where open_id = #{openId}
-          and status = 1;
+        and status = 1;
+    </select>
+
+    <select id="searchUserPermissions" parameterType="integer" resultType="java.lang.String">
+        select p.permission_name
+        from tb_user u
+        join tb_role r on json_contains(u.role, cast(r.id as char))
+        join tb_permission p on json_contains(r.permissions, cast(p.id as char))
+        where u.id = #{userId}
+        and u.status = 1;
     </select>
 </mapper>

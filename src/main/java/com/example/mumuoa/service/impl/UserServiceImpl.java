@@ -15,6 +15,7 @@ import org.springframework.util.ObjectUtils;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -75,5 +76,11 @@ public class UserServiceImpl implements UserService {
         }
 
         return 0;
+    }
+
+    @Override
+    public Set<String> searchUserPermissions(Integer userId) {
+        Set<String> permissions = userMapper.searchUserPermissions(userId);
+        return permissions;
     }
 }
