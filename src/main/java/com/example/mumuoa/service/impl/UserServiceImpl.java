@@ -83,4 +83,17 @@ public class UserServiceImpl implements UserService {
         Set<String> permissions = userMapper.searchUserPermissions(userId);
         return permissions;
     }
+
+    @Override
+    public Integer login(String code) {
+        String openId = getOpenId(code);
+        Integer userId = userMapper.searchIdByOpenId(openId);
+        if (userId == null) {
+            throw new MumuoaException("账户不存在");
+        }
+
+        //TODO 从消息队列中接收消息，转到消息表
+
+        return userId;
+    }
 }

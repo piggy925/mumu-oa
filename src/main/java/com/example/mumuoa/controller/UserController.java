@@ -2,6 +2,7 @@ package com.example.mumuoa.controller;
 
 import com.example.mumuoa.common.util.R;
 import com.example.mumuoa.config.shiro.JwtUtil;
+import com.example.mumuoa.controller.form.LoginForm;
 import com.example.mumuoa.controller.form.RegisterForm;
 import com.example.mumuoa.service.UserService;
 import io.swagger.annotations.Api;
@@ -46,5 +47,15 @@ public class UserController {
 
     private void saveTokenCache(String token, int userId) {
         redisTemplate.opsForValue().set(token, userId, cacheExpire, TimeUnit.DAYS);
+    }
+
+    @ApiOperation("用户登录")
+    @PostMapping("/login")
+    private R login(@Valid @RequestBody LoginForm form) {
+        Integer userId = userService.login(form.getCode());
+        String token = jwtUtil.createToken(userId);
+        Set<String> permissions = userService.searchUserPermissions(userId);
+        saveTokenCache(token, userId);
+        return R.success("登录成功").put("token", token).put("permission", permissions);
     }
 }
