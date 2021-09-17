@@ -1,9 +1,8 @@
 package com.example.mumuoa.config.shiro;
 
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import com.example.mumuoa.db.pojo.User;
+import com.example.mumuoa.service.UserService;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -11,11 +10,15 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Set;
 
 @Component
 public class OAuth2Realm extends AuthorizingRealm {
     @Resource
     private JwtUtil jwtUtil;
+
+    @Resource
+    private UserService userService;
 
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -27,9 +30,11 @@ public class OAuth2Realm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+        User user = (User) principalCollection.getPrimaryPrincipal();
+        Integer userId = user.getId();
+        Set<String> permissions = userService.searchUserPermissions(userId);
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        // TODO 查询用户权限
-        // TODO 将权限信息添加到info对象中
+        info.setStringPermissions(permissions);
         return info;
     }
 
@@ -38,9 +43,13 @@ public class OAuth2Realm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        // TODO 从token中获取userId，查询账户是否被冻结
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo();
-        // TODO 添加用户信息，token到info对象中
+        String accessToken = (String) authenticationToken.getPrincipal();
+        int userId = jwtUtil.getUserId(accessToken);
+        User user = userService.searchUserById(userId);
+        if (user == null) {
+            throw new LockedAccountException("账户已被锁定，请联系管理员");
+        }
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, accessToken, getName());
         return info;
     }
 }

@@ -1,5 +1,7 @@
 package com.example.mumuoa.service;
 
+import com.example.mumuoa.db.pojo.User;
+
 import java.util.Set;
 
 public interface UserService {
@@ -8,4 +10,6 @@ public interface UserService {
     Set<String> searchUserPermissions(Integer userId);
 
     Integer login(String code);
+
+    User searchUserById(Integer userId);
 }

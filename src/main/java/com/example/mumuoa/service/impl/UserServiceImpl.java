@@ -4,6 +4,7 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.example.mumuoa.db.dao.UserMapper;
+import com.example.mumuoa.db.pojo.User;
 import com.example.mumuoa.exception.MumuoaException;
 import com.example.mumuoa.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -95,5 +96,11 @@ public class UserServiceImpl implements UserService {
         //TODO 从消息队列中接收消息，转到消息表
 
         return userId;
+    }
+
+    @Override
+    public User searchUserById(Integer userId) {
+        User user = userMapper.searchById(userId);
+        return user;
     }
 }

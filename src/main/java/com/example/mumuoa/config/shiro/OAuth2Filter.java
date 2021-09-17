@@ -1,7 +1,6 @@
 package com.example.mumuoa.config.shiro;
 
 import cn.hutool.core.util.StrUtil;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import org.apache.http.HttpStatus;
 import org.apache.shiro.authc.AuthenticationException;
@@ -88,7 +87,7 @@ public class OAuth2Filter extends AuthenticatingFilter {
                 response.getWriter().println("token已过期");
                 return false;
             }
-        } catch (JWTDecodeException e) {
+        } catch (Exception e) {
             response.setStatus(HttpStatus.SC_UNAUTHORIZED);
             response.getWriter().println("无效的令牌");
             return false;

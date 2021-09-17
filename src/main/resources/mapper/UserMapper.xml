@@ -2,14 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mumuoa.db.dao.UserMapper">
     <select id="haveRootUser" resultType="boolean">
-        select if(count(*), true, false)
-        from tb_user
-        where root = 1;
+        SELECT IF(COUNT(*), TRUE, FALSE)
+        FROM tb_user
+        WHERE root = 1;
     </select>
 
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="hashmap" useGeneratedKeys="true">
-        insert into tb_user
-        set
+        INSERT INTO
+        tb_user
+        SET
         <if test="openId != null">
             open_id = #{openId},
         </if>
@@ -37,25 +38,44 @@
         `role` = #{role},
         root = #{root},
         <if test="deptName != null">
-            dept_id = (select tb_dept.id from tb_dept where dept_name = #{deptName}),
+            dept_id = (SELECT tb_dept.id FROM tb_dept WHERE dept_name = #{deptName}),
         </if>
         `status` = #{status},
         create_time = #{createTime}
     </insert>
 
     <select id="searchIdByOpenId" parameterType="string" resultType="integer">
-        select id
-        from tb_user
-        where open_id = #{openId}
-        and status = 1;
+        SELECT id
+        FROM tb_user
+        WHERE open_id = #{openId}
+        AND status = 1;
     </select>
 
     <select id="searchUserPermissions" parameterType="integer" resultType="java.lang.String">
-        select p.permission_name
-        from tb_user u
-        join tb_role r on json_contains(u.role, cast(r.id as char))
-        join tb_permission p on json_contains(r.permissions, cast(p.id as char))
-        where u.id = #{userId}
-        and u.status = 1;
+        SELECT p.permission_name
+        FROM tb_user u
+        JOIN tb_role r ON JSON_CONTAINS(u.role, CAST(r.id AS char))
+        JOIN tb_permission p ON JSON_CONTAINS(r.permissions, CAST(p.id AS char))
+        WHERE u.id = #{userId}
+        AND u.status = 1;
+    </select>
+
+    <select id="searchById" parameterType="integer" resultType="com.example.mumuoa.db.pojo.User">
+        SELECT id,
+        open_id,
+        nickname,
+        photo,
+        name,
+        sex,
+        tel,
+        email,
+        hiredate,
+        role,
+        root,
+        dept_id,
+        status,
+        create_time
+        FROM tb_user
+        WHERE id = #{userId}
     </select>
 </mapper>

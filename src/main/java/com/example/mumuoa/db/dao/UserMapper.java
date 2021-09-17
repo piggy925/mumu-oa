@@ -1,5 +1,6 @@
 package com.example.mumuoa.db.dao;
 
+import com.example.mumuoa.db.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.HashMap;
@@ -14,5 +15,7 @@ public interface UserMapper {
     Integer searchIdByOpenId(String openId);
 
     Set<String> searchUserPermissions(Integer userId);
+
+    User searchById(Integer userId);
 
 }
