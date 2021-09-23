@@ -17,11 +17,11 @@ public class MessageRefEntity implements Serializable {
     private String messageId;
 
     @Indexed
-    private String receiverId;
+    private Integer receiverId;
 
     @Indexed
-    private String readFlag;
+    private Boolean readFlag;
 
     @Indexed
-    private String lastFlag;
+    private Boolean lastFlag;
 }

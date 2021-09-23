@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONObject;
 import com.example.mumuoa.db.pojo.MessageEntity;
+import com.example.mumuoa.db.pojo.MessageRefEntity;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -45,8 +46,33 @@ public class MessageDao {
         List<HashMap> list = results.getMappedResults();
         list.forEach(one -> {
             // TODO
-        });
+            List<MessageRefEntity> refList = (List<MessageRefEntity>) one.get("ref");
+            MessageRefEntity entity = refList.get(0);
+            Boolean readFlag = entity.getReadFlag();
+            String refId = entity.get_id();
+            one.put("readFlag", readFlag);
+            one.put("refId", refId);
+            one.remove("ref");
+            one.remove("_id");
 
+            Date sendTime = (Date) one.get("sendTime");
+            sendTime = DateUtil.offset(sendTime, DateField.HOUR, -8);
+
+            String today = DateUtil.today();
+            if (today.equals(DateUtil.date(sendTime).toString())) {
+                one.put("sendTime", DateUtil.format(sendTime, "HH:mm"));
+            } else {
+                one.put("sendTime", DateUtil.format(sendTime, "yyyy-MM-dd"));
+            }
+        });
         return list;
+    }
+
+    public HashMap searchMessageById(String id) {
+        HashMap map = mongoTemplate.findById(id, HashMap.class, "message");
+        Date sendTime = (Date) map.get("sendTime");
+        sendTime = DateUtil.offset(sendTime, DateField.HOUR, -8);
+        map.replace("sendTime", DateUtil.format(sendTime, "yyyy-MM-dd HH:mm"));
+        return map;
     }
 }
