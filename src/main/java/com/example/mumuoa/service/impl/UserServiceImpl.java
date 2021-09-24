@@ -1,12 +1,15 @@
 package com.example.mumuoa.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.example.mumuoa.db.dao.UserMapper;
+import com.example.mumuoa.db.pojo.MessageEntity;
 import com.example.mumuoa.db.pojo.User;
 import com.example.mumuoa.exception.MumuoaException;
 import com.example.mumuoa.service.UserService;
+import com.example.mumuoa.task.MessageTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -29,6 +32,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private MessageTask messageTask;
 
     /**
      * 获取openId.
@@ -68,6 +74,15 @@ public class UserServiceImpl implements UserService {
                 param.put("root", true);
                 userMapper.insert(param);
                 Integer id = userMapper.searchIdByOpenId(openId);
+
+                MessageEntity entity = new MessageEntity();
+                entity.setSenderId(0);
+                entity.setSenderName("系统消息");
+                entity.setUuid(IdUtil.simpleUUID());
+                entity.setSenderTime(new Date());
+                entity.setMsg("欢迎您注册成为超级管理员，请及时更新您的个人信息");
+                messageTask.send(id + "", entity);
+
                 return id;
             } else {
                 throw new MumuoaException("已存在超级管理员账号");

@@ -40,10 +40,10 @@ spring:
     mongodb:
       host: localhost
       port: 27017
-      database: mumu-oa
+      database: oa-db
       authentication-database: oa-db
       username: admin
-      password: aaaa1234
+      password: 'aaaa1234'
 
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
