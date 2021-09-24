@@ -7,13 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface MessageService {
-    String insert(MessageEntity entity);
+    String insertMessage(MessageEntity entity);
 
     List<HashMap> searchMessageByPage(int userId, long start, int length);
 
     HashMap searchMessageById(String id);
 
-    String insert(MessageRefEntity entity);
+    String insertMessageRef(MessageRefEntity entity);
 
     long searchUnreadCount(int userId);
 
