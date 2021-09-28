@@ -8,6 +8,7 @@ import com.example.mumuoa.controller.form.SearchMessageByIdForm;
 import com.example.mumuoa.controller.form.SearchMessageByPageForm;
 import com.example.mumuoa.controller.form.UpdateUnreadMessageForm;
 import com.example.mumuoa.service.MessageService;
+import com.example.mumuoa.task.MessageTask;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,9 @@ public class MessageController {
 
     @Resource
     private MessageService messageService;
+
+    @Resource
+    private MessageTask messageTask;
 
     @ApiOperation("获取分页消息列表")
     @PostMapping("/searchMessageByPage")
@@ -57,5 +61,15 @@ public class MessageController {
     public R deleteMessageRefById(@Valid @RequestBody DeleteMessageRefByIdForm form) {
         long count = messageService.deleteMessageRefById(form.getId());
         return R.success().put("result", count == 1);
+    }
+
+    @ApiOperation("刷新用户消息")
+    @GetMapping("/refreshMessage")
+    public R refreshMessage(@RequestHeader("token") String token) {
+        int userId = jwtUtil.getUserId(token);
+        messageTask.reveiveAsync(userId + "");
+        long lastCount = messageService.searchLastCount(userId);
+        long unreadCount = messageService.searchUnreadCount(userId);
+        return R.success().put("unreadRows", unreadCount).put("lastRows", lastCount);
     }
 }

@@ -107,9 +107,7 @@ public class UserServiceImpl implements UserService {
         if (userId == null) {
             throw new MumuoaException("账户不存在");
         }
-
-        //TODO 从消息队列中接收消息，转到消息表
-
+        messageTask.reveiveAsync(userId + "");
         return userId;
     }
 
